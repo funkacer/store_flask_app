@@ -26,14 +26,10 @@ DB = "store.db"
 
 @app.route("/")
 def index():
-    return render_template("index.html", name=session.get("name"), pwd=os.getcwd())
-
-@app.route("/books")
-def index():
     con = sqlite3.connect(DB)
     con.row_factory = sqlite3.Row
     cur = con.execute("SELECT * from books")
-    registrants = cur.fetchall()
+    books = cur.fetchall()
     con.close()
     return render_template("books.html", name=session.get("name"), pwd=os.getcwd(), books=books)
 
@@ -41,7 +37,7 @@ def index():
 def login():
     if request.method == "POST":
         session["name"] = request.form.get("name")
-        return redirect("/books")
+        return redirect("/")
     return render_template("login.html")
 
 @app.route("/logout")
