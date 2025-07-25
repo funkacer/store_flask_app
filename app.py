@@ -35,13 +35,13 @@ def index():
     cur = con.execute("SELECT * from books")
     registrants = cur.fetchall()
     con.close()
-    return render_template("books.html", name=session.get("name"), books=books)
+    return render_template("books.html", name=session.get("name"), pwd=os.getcwd(), books=books)
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
         session["name"] = request.form.get("name")
-        return redirect("/")
+        return redirect("/books")
     return render_template("login.html")
 
 @app.route("/logout")
