@@ -28,10 +28,27 @@ DB = "store.db"
 def index():
     con = sqlite3.connect(DB)
     con.row_factory = sqlite3.Row
-    cur = con.execute("SELECT * from books")
+    cur = con.execute("SELECT * FROM books")
     books = cur.fetchall()
     con.close()
     return render_template("books.html", name=session.get("name"), pwd=os.getcwd(), books=books)
+
+@app.route("/cart", methods=["GET", "POST"])
+def cart():
+    if "cart" not in session:
+        session["cart"] = []
+    if request.method == "POST":
+        book_id = request.form.get("id")
+        if book_id:
+            session["cart"].append(book_id)
+        return redirect("/cart")
+    con = sqlite3.connect(DB)
+    con.row_factory = sqlite3.Row
+    #cur = con.execute(f"SELECT * FROM books WHERE id IN ({','.join(session["cart"])})")
+    cur = con.execute(f"SELECT * FROM books WHERE id IN (?)", session["cart"])
+    books = cur.fetchall()
+    con.close()
+    return render_template("cart.html", books=books)
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
