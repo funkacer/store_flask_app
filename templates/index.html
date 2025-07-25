@@ -2,21 +2,10 @@
 
 {% block body %}
 
-<h1>Registration</h1>
-
-<h2>Pwd: {{ pwd }}</h2>
-
-<form action="/register" method="post">
-    <input autocomplete="off" autofocus name="name" placeholder="Name" type="text">
-    <select name="sport">
-        <option disabled selected value="">Sport</option>
-        {% for sport in sports %}
-            <option value="{{ sport }}">{{ sport }}</option>
-        {% endfor %}
-    </select>
-    <input name="sex" type="radio" value="Female"> Female
-    <input name="sex" type="radio" value="Male"> Male
-    <button type="submit">Register</button>
-</form>
+    {% if name %}
+        You are logged in as {{name}}. <a href="/logout"> Log out</a>.
+    {% else %}
+        You are not logged in. <a href="/login"> Log in</a>.
+    {% endif %}
 
 {% endblock %}
