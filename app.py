@@ -19,11 +19,23 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
+# pro pythonanywhere:
+DB = "mysite/store.db"
+# pro localhost:
 DB = "store.db"
 
 @app.route("/")
 def index():
-    return render_template("index.html", name=session.get("name"))
+    return render_template("index.html", name=session.get("name"), pwd=os.getcwd())
+
+@app.route("/books")
+def index():
+    con = sqlite3.connect(DB)
+    con.row_factory = sqlite3.Row
+    cur = con.execute("SELECT * from books")
+    registrants = cur.fetchall()
+    con.close()
+    return render_template("books.html", name=session.get("name"), books=books)
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -37,32 +49,3 @@ def logout():
     session.clear()
     return redirect("/")
 
-@app.route("/")
-def index():
-    return render_template("index.html", sports=SPORTS, pwd=os.getcwd())
-
-@app.route("/register", methods=["POST"])
-def register():
-    name = request.form.get("name")
-    if not name:
-        return render_template("error.html", message="Missing name")
-    sport = request.form.get("sport")
-    if not sport:
-        return render_template("error.html", message="Missing sport")
-    if sport not in SPORTS:
-        return render_template("error.html", message="Invalid sport")
-    sex = next(filter(lambda x: SEX[x]==request.form.get("sex"), SEX.keys()), None)
-    con = sqlite3.connect(DB)
-    with con:
-        con.execute("INSERT INTO registrants (name, sport, sex) VALUES (?, ?, ?)", [name, sport, sex])
-    con.close()
-    return render_template("success.html")
-
-@app.route("/registrants")
-def registrants():
-    con = sqlite3.connect(DB)
-    con.row_factory = sqlite3.Row
-    cur = con.execute("SELECT * from registrants")
-    registrants = cur.fetchall()
-    con.close()
-    return render_template("registrants.html", registrants=registrants, SEX=SEX)
