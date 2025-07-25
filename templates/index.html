@@ -2,6 +2,10 @@
 
 {% block body %}
 
+    <h1>Books</h1>
+
+    <h2>Pwd: {{ pwd }}</h2>
+
     {% if name %}
         You are logged in as {{name}}. <a href="/logout"> Log out</a>.
     {% else %}
