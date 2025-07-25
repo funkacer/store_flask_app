@@ -4,35 +4,28 @@
 
     <h1>Books</h1>
 
-    <h2>Pwd: {{ pwd }}</h2>
-
-    {% if name %}
-        You are logged in as {{name}}. <a href="/logout"> Log out</a>.
-        <table>
-            <thead>
+    <table>
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Title</th>
+                <th>Cart</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for book in books %}
                 <tr>
-                    <th>Id</th>
-                    <th>Title</th>
-                    <th>Cart</th>
+                    <td>{{ book.id }}</td>
+                    <td>{{ book.title }}</td>
+                    <td>
+                        <form action = "/cart" method="post">
+                            <input name="id" value="{{ book.id }}" type="hidden">
+                            <button type="submit">Add to cart</button>
+                        </form>
+                    </td>
                 </tr>
-            </thead>
-            <tbody>
-                {% for book in books %}
-                    <tr>
-                        <td>{{ book.id }}</td>
-                        <td>{{ book.title }}</td>
-                        <td>
-                            <form action = "/cart" method="post">
-                                <input name="id" value="{{ book.id }}" type="hidden">
-                                <button type="submit">Add to cart</button>
-                            </form>
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        You are not logged in. <a href="/login"> Log in</a>.
-    {% endif %}
-
+            {% endfor %}
+        </tbody>
+    </table>
+    
 {% endblock %}

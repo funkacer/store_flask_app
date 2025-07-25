@@ -11,7 +11,6 @@
 from flask import Flask, render_template, redirect, request, session
 from flask_session import Session
 import sqlite3
-import os
 
 app = Flask(__name__)
 
@@ -31,7 +30,7 @@ def index():
     cur = con.execute("SELECT * FROM books")
     books = cur.fetchall()
     con.close()
-    return render_template("books.html", name=session.get("name"), pwd=os.getcwd(), books=books)
+    return render_template("books.html", books=books)
 
 @app.route("/cart", methods=["GET", "POST"])
 def cart():
@@ -44,21 +43,9 @@ def cart():
         return redirect("/cart")
     con = sqlite3.connect(DB)
     con.row_factory = sqlite3.Row
-    #cur = con.execute(f"SELECT * FROM books WHERE id IN ({','.join(session["cart"])})")
-    cur = con.execute(f"SELECT * FROM books WHERE id IN (?)", session["cart"])
+    cur = con.execute(f"SELECT * FROM books WHERE id IN ({','.join(session["cart"])})")
+    #cur = con.execute(f"SELECT * FROM books WHERE id IN (?)", session["cart"])
     books = cur.fetchall()
     con.close()
     return render_template("cart.html", books=books)
-
-@app.route("/login", methods=["GET", "POST"])
-def login():
-    if request.method == "POST":
-        session["name"] = request.form.get("name")
-        return redirect("/")
-    return render_template("login.html")
-
-@app.route("/logout")
-def logout():
-    session.clear()
-    return redirect("/")
 
