@@ -43,7 +43,7 @@ def cart():
         return redirect("/cart")
     con = sqlite3.connect(DB)
     con.row_factory = sqlite3.Row
-    cur = con.execute(f"SELECT * FROM books WHERE id IN ({','.join(session["cart"])})")
+    cur = con.execute(f"SELECT * FROM books WHERE id IN ({','.join(session['cart'])})")
     #cur = con.execute(f"SELECT * FROM books WHERE id IN (?)", session["cart"])
     books = cur.fetchall()
     con.close()
